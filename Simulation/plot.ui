@@ -1,0 +1,38 @@
+<?xml version='1.0'?>
+<ui version="4.0">
+<author/>
+<comment/>
+<exportmacro/>
+<class>Plot</class>
+ <widget class="QWidget" name="Plot">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Plot</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QCustomPlot" name="customPlot" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  </widget>
+ <layoutdefault spacing="0" margin="0"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

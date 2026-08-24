@@ -1,0 +1,13 @@
+build*/
+*.o
+*.so
+*.so.*
+*.a
+moc_*
+qrc_*
+Makefile
+*.user
+Sim2
+Simulation/Simulation
+imgui.ini
+.goutputstream*

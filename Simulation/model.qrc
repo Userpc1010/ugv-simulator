@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>UAV/UAV.obj</file>
+        <file>UAV/UAV.mtl</file>
+        <file>Qudro/untitled.mtl</file>
+        <file>Qudro/untitled.obj</file>
+        <file>Drone_1/Drone.mtl</file>
+        <file>Drone_1/Drone.obj</file>
+        <file>Moon_Rover/14014_Moon_Rover_V1_l1.mtl</file>
+        <file>Moon_Rover/14014_Moon_Rover_V1_l1.obj</file>
+        <file>Drone 2/drone2.mtl</file>
+        <file>Drone 2/drone2.obj</file>
+        <file>DualRotorTailSitter/untitled.mtl</file>
+        <file>DualRotorTailSitter/untitled.obj</file>
+        <file>Pickup/Truck_hull.mtl</file>
+        <file>Pickup/Truck_hull.obj</file>
+        <file>Pickup/Truck_wheel_back_left.mtl</file>
+        <file>Pickup/Truck_wheel_back_left.obj</file>
+        <file>Pickup/Truck_wheel_back_right.mtl</file>
+        <file>Pickup/Truck_wheel_back_right.obj</file>
+        <file>Pickup/Truck_wheel_front_left.mtl</file>
+        <file>Pickup/Truck_wheel_front_left.obj</file>
+        <file>Pickup/Truck_wheel_front_right.mtl</file>
+        <file>Pickup/Truck_wheel_front_right.obj</file>
+        <file>RС_Car/10600_RC_ Car_SG_v2_L3.mtl</file>
+        <file>RС_Car/10600_RC_ Car_SG_v2_L3.obj</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,8 @@
+{
+    "motion_model": "ackermann",
+    "turning_radius": 19.0,
+    "grid_resolution": 0.489,
+    "stopping_threshold": 5,
+    "num_of_headings": 24,
+    "trajectory_distinctness_ratio": 0.90
+}

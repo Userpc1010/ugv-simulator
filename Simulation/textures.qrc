@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cube1.png</file>
+        <file>cube2.png</file>
+        <file>cube3.png</file>
+        <file>Cube.png</file>
+        <file>sky/sky_back.png</file>
+        <file>sky/sky_bottom.png</file>
+        <file>sky/sky_forward.png</file>
+        <file>sky/sky_left.png</file>
+        <file>sky/sky_right.png</file>
+        <file>sky/sky_top.png</file>
+        <file>sky/Terrain_1.jpg</file>
+        <file>sky/Terrain_2.jpg</file>
+        <file>sky/Terrain_3.jpg</file>
+        <file>sky/Terrain_4.jpg</file>
+        <file>UAV/UAV.png</file>
+        <file>Target.png</file>
+        <file>Moon_Rover/14014_Moon_Rover_V1_Atlas.png</file>
+        <file>Drone 2/drone2_Atlas.png</file>
+        <file>DualRotorTailSitter/FUSELAGE AllCATPart.png</file>
+        <file>Pickup/pickup_diffuse.png</file>
+        <file>Pickup/wheels2.png</file>
+        <file>RС_Car/10600_RC_Car_SG_v1_diffuse.png</file>
+    </qresource>
+</RCC>
