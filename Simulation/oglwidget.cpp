@@ -374,7 +374,7 @@ void OGLWidget::timerEvent(QTimerEvent *event) {
     }
 
     // --- RPP CONTROL ---
-    if (m_controllerMode == ControllerMode_RPP && m_rppController && mppi_conunter >= 10) {
+    if (m_controllerMode == ControllerMode_RPP && m_rppController && mppi_conunter >= 5) {
         mppi_conunter = 0;
 
         float cellSize = m_terrain->getWidth() / m_terrain->getCostmapWidth();
@@ -440,27 +440,27 @@ void OGLWidget::timerEvent(QTimerEvent *event) {
         rpp::RPPOutput rpp_out = m_rppController->computeVelocityCommands(
             robot_world_x, robot_world_z, carYaw,
             local_vel.z(), data.angVel.y(),
-            0.1f
+            0.05f
         );
 
         m_v_setpoint = rpp_out.linear_vel;
         m_w_setpoint = -rpp_out.angular_vel;
 
-        static int rpp_log_counter = 0;
-        if (rpp_log_counter++ % 10 == 0) {
-            float lx, ly;
-            m_rppController->getLookaheadPoint(lx, ly);
-            qDebug() << "[RPP]"
-                     << "pos:" << data.pos.x() << "," << data.pos.z()
-                     << "v:" << local_vel.z() << "m/s"
-                     << "OUT: v_cmd:" << rpp_out.linear_vel
-                     << "w_cmd:" << rpp_out.angular_vel
-                     << "lookahead:" << lx << "," << ly;
-        }
+//        static int rpp_log_counter = 0;
+//        if (rpp_log_counter++ % 10 == 0) {
+//            float lx, ly;
+//            m_rppController->getLookaheadPoint(lx, ly);
+//            qDebug() << "[RPP]"
+//                     << "pos:" << data.pos.x() << "," << data.pos.z()
+//                     << "v:" << local_vel.z() << "m/s"
+//                     << "OUT: v_cmd:" << rpp_out.linear_vel
+//                     << "w_cmd:" << rpp_out.angular_vel
+//                     << "lookahead:" << lx << "," << ly;
+//        }
     }
 
     // --- VECTOR PURSUIT CONTROL ---
-    if (m_controllerMode == ControllerMode_VPC && m_vpcController && mppi_conunter >= 10) {
+    if (m_controllerMode == ControllerMode_VPC && m_vpcController && mppi_conunter >= 5) {
         mppi_conunter = 0;
 
         float cellSize = m_terrain->getWidth() / m_terrain->getCostmapWidth();
@@ -526,44 +526,44 @@ void OGLWidget::timerEvent(QTimerEvent *event) {
         vpc::VPCOutput vpc_out = m_vpcController->computeVelocityCommands(
             robot_world_x, robot_world_z, carYaw,
             local_vel.z(), data.angVel.y(),
-            0.1f
+            0.05f
         );
 
         m_v_setpoint = vpc_out.linear_vel;
         m_w_setpoint = -vpc_out.angular_vel;
 
-        static int vpc_log_counter = 0;
-        if (vpc_log_counter++ % 10 == 0) {
-            float lx, ly;
-            m_vpcController->getLookaheadPoint(lx, ly);
+//        static int vpc_log_counter = 0;
+//        if (vpc_log_counter++ % 10 == 0) {
+//            float lx, ly;
+//            m_vpcController->getLookaheadPoint(lx, ly);
 
-            qDebug() << "[VPC]"
-                     << "pos:" << data.pos.x() << "," << data.pos.z()
-                     << "v:" << local_vel.z() << "m/s"
-                     << "OUT: v_cmd:" << vpc_out.linear_vel
-                     << "w_cmd:" << vpc_out.angular_vel
-                     << "steering:" << vpc_out.steering_angle * RADTODEG << "deg"
-                     << "lookahead:" << lx << "," << ly
-                     << "lookahead_dist:" << m_vpcController->getLookaheadDist()
-                     << "lookahead_heading:" << m_vpcController->getLookaheadHeading() * RADTODEG << "deg"
-                     << "turning_radius:" << m_vpcController->getTurningRadius()
-                     << "curvature:" << m_vpcController->getCurvature()
-                     << "sign:" << m_vpcController->getSign()
-                     << "path_size:" << m_vpcController->getPathSize()
-                     << "transformed_size:" << m_vpcController->getTransformedPathSize()
-                     << "rotating:" << vpc_out.is_rotating_to_heading;
-        }
+//            qDebug() << "[VPC]"
+//                     << "pos:" << data.pos.x() << "," << data.pos.z()
+//                     << "v:" << local_vel.z() << "m/s"
+//                     << "OUT: v_cmd:" << vpc_out.linear_vel
+//                     << "w_cmd:" << vpc_out.angular_vel
+//                     << "steering:" << vpc_out.steering_angle * RADTODEG << "deg"
+//                     << "lookahead:" << lx << "," << ly
+//                     << "lookahead_dist:" << m_vpcController->getLookaheadDist()
+//                     << "lookahead_heading:" << m_vpcController->getLookaheadHeading() * RADTODEG << "deg"
+//                     << "turning_radius:" << m_vpcController->getTurningRadius()
+//                     << "curvature:" << m_vpcController->getCurvature()
+//                     << "sign:" << m_vpcController->getSign()
+//                     << "path_size:" << m_vpcController->getPathSize()
+//                     << "transformed_size:" << m_vpcController->getTransformedPathSize()
+//                     << "rotating:" << vpc_out.is_rotating_to_heading;
+//        }
 
-        if (vpc_log_counter++ % 50 == 0) {  // реже, чтобы не засорять
-            const auto& transformed = m_vpcController->getTransformedPath();
-            qDebug() << "[VPC PATH] First 5 points (robot frame):";
-            for (int i = 0; i < std::min(5, (int)transformed.poses.size()); ++i) {
-                qDebug() << "  [" << i << "]"
-                         << "x:" << transformed.poses[i].position.x()
-                         << "y:" << transformed.poses[i].position.y()
-                         << "heading:" << transformed.poses[i].orientation * RADTODEG << "deg";
-            }
-        }
+//        if (vpc_log_counter++ % 50 == 0) {  // реже, чтобы не засорять
+//            const auto& transformed = m_vpcController->getTransformedPath();
+//            qDebug() << "[VPC PATH] First 5 points (robot frame):";
+//            for (int i = 0; i < std::min(5, (int)transformed.poses.size()); ++i) {
+//                qDebug() << "  [" << i << "]"
+//                         << "x:" << transformed.poses[i].position.x()
+//                         << "y:" << transformed.poses[i].position.y()
+//                         << "heading:" << transformed.poses[i].orientation * RADTODEG << "deg";
+//            }
+//        }
     }
 
     update();
@@ -974,12 +974,6 @@ void OGLWidget::paintGL()
         ImGui::PopStyleColor();
 
         ImGui::Text("%-6s %6s", "+1.0", "-1.0");
-        ImGui::Separator();
-
-        ImGui::SliderFloat("Spring k", &Sim.cfg.k_spring, k_min, k_max);
-        ImGui::SliderFloat("Damping Comp", &Sim.cfg.damping_compression, d_min, d_max);
-        ImGui::SliderFloat("Damping Rebound", &Sim.cfg.damping_rebound, d_min, d_max);
-
         ImGui::Separator();
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

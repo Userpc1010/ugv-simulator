@@ -26,20 +26,20 @@ struct RPPParams
     // Скорости
     float max_linear_vel = 20.0f;
     float min_linear_vel = -10.0f;
-    float max_angular_vel = 0.25f;
-    float min_angular_vel = -0.25f;
+    float max_angular_vel = 0.5f;
+    float min_angular_vel = -0.5f;
 
     // Ускорения (для Dynamic Window)
-    float max_linear_accel = 9.0f;
-    float max_linear_decel = -9.0f;
+    float max_linear_accel = 25.0f;
+    float max_linear_decel = -25.0f;
     float max_angular_accel = 1.2f;
     float max_angular_decel = -1.2f;
 
     // Lookahead
-    float lookahead_dist = 10.0f;
-    float min_lookahead_dist = 5.0f;
-    float max_lookahead_dist = 25.0f;
-    float lookahead_time = 3.5f;
+    float lookahead_dist = 3.5f;
+    float min_lookahead_dist = 2.2f;
+    float max_lookahead_dist = 10.0f;
+    float lookahead_time = 1.5f;
     bool use_velocity_scaled_lookahead_dist = true;
 
     // Регуляция скорости
@@ -49,8 +49,8 @@ struct RPPParams
     float regulated_linear_scaling_min_speed = 1.0f;
 
     // Подход к цели
-    float min_approach_linear_velocity = 1.5f;
-    float approach_velocity_scaling_dist = 15.0f;
+    float min_approach_linear_velocity = 1.0f;
+    float approach_velocity_scaling_dist = 30.0f;
 
     // Поворот к цели/пути
     bool use_rotate_to_heading = false;
@@ -73,7 +73,7 @@ struct RPPParams
     bool interpolate_curvature_after_goal = false;
 
     // Dynamic Window Pure Pursuit
-    bool use_dynamic_window = false;
+    bool use_dynamic_window = true;
 
     // Ackermann
     bool allow_reversing = true;

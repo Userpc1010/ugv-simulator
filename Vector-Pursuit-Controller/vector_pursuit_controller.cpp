@@ -294,26 +294,6 @@ float VectorPursuitController::approachVelocityConstraint(
     return constrained_linear_vel;
 }
 
-//float VectorPursuitController::approachVelocityConstraint(
-//    float constrained_linear_vel) const
-//{
-//    if (m_transformedPath.poses.empty()) return constrained_linear_vel;
-
-//    // ✅ Как в RPP: расстояние до последней точки (цели)
-//    const auto& last = m_transformedPath.poses.back();
-//    float dist_to_goal = std::hypot(last.position.x(), last.position.y());
-
-//    if (dist_to_goal < m_params.approach_velocity_scaling_dist) {
-//        float velocity_scaling = dist_to_goal / m_params.approach_velocity_scaling_dist;
-//        float approach_vel = constrained_linear_vel * velocity_scaling;
-
-//        approach_vel = std::max(approach_vel, m_params.min_approach_linear_velocity);
-//        return std::min(constrained_linear_vel, approach_vel);
-//    }
-
-//    return constrained_linear_vel;
-//}
-
 void VectorPursuitController::applyConstraints(
     float curvature, float pose_cost,
     float& linear_vel, float& sign)
@@ -491,6 +471,10 @@ VPCOutput VectorPursuitController::computeVelocityCommands(
         if (lookahead_y < 0) {
             angular_vel *= -1;
         }
+
+        if (sign < 0.0f) {
+           angular_vel *= -1.0f;
+         }
     }
 
     // Проверка коллизий
@@ -518,6 +502,23 @@ VPCOutput VectorPursuitController::computeVelocityCommands(
 
     m_lastLinearVel = linear_vel;
     m_lastAngularVel = angular_vel;
+
+    // ==================== УЛЬТРАКОМПАКТНЫЙ ДЕБАГ ====================
+    static int axis_debug_counter = 0;
+    if (axis_debug_counter++ % 10 == 0) {
+        float g_dx = m_path.poses.empty() ? 0.0f : m_path.poses.back().position.x() - robot_x;
+        float g_dz = m_path.poses.empty() ? 0.0f : m_path.poses.back().position.y() - robot_y;
+        float f_x = m_transformedPath.poses.empty() ? 0.0f : m_transformedPath.poses.front().position.x();
+
+        std::cout << "[VPC_AUDIT] " << (sign < 0 ? "REV" : "FWD")
+                  << " | R_W:" << robot_x << "," << robot_y << "," << robot_yaw * 57.3f
+                  << " | G_T:" << g_dx << "," << g_dz
+                  << " | L_P:" << lookahead_x << "," << lookahead_y << "," << lookahead_dist
+                  << " | FRST_X:" << f_x
+                  << " | SGN:" << sign << " W:" << output.angular_vel << " ST:" << output.steering_angle * 57.3f
+                  << std::endl;
+    }
+    // ================================================================
 
 
     return output;

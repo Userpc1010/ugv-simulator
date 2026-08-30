@@ -449,13 +449,25 @@ RPPOutput RPPController::computeVelocityCommands(
         applyConstraints(regulation_curvature, pose_cost, linear_vel, x_vel_sign);
 
         if (!m_params.use_dynamic_window) {
-            angular_vel = linear_vel * regulation_curvature;
-        } else {
+            if (x_vel_sign < 0.0f) {
+                // Геометрия без DW: меняем знак кривизны, чтобы развернуть руль при реверсе
+                angular_vel = linear_vel * (-regulation_curvature);
+            } else {
+                angular_vel = linear_vel * regulation_curvature;
+            }
+        }
+        else {
+
+            float effective_curvature = (x_vel_sign < 0.0f) ? -regulation_curvature : regulation_curvature;
+
             computeDynamicWindowVelocities(
                 current_linear_vel, current_angular_vel,
-                linear_vel, regulation_curvature, x_vel_sign, dt,
+                linear_vel, effective_curvature, x_vel_sign, dt,
                 linear_vel, angular_vel);
         }
+
+        // Работает как в режиме с Dynamic Window, так и в чистом геометрическом режиме
+        angular_vel = std::clamp(angular_vel, m_params.min_angular_vel, m_params.max_angular_vel);
     }
 
     // Проверка коллизий
@@ -477,9 +489,28 @@ RPPOutput RPPController::computeVelocityCommands(
     // Формируем выход
     output.linear_vel = linear_vel;
     output.angular_vel = angular_vel;
-    output.steering_angle = std::atan2(m_params.wheelbase * angular_vel,
-                                        std::max(std::fabs(linear_vel), 0.1f));
+    output.steering_angle = std::atan2(m_params.wheelbase * angular_vel, std::max(std::fabs(linear_vel), 0.1f));
     output.is_rotating_to_heading = m_isRotatingToHeading;
+
+
+    // ==================== УЛЬТРАКОМПАКТНЫЙ ДЕБАГ ДЛЯ RPP ====================
+    static int rpp_axis_debug_counter = 0;
+    if (rpp_axis_debug_counter++ % 10 == 0) {
+        float g_dx = m_path.poses.empty() ? 0.0f : m_path.poses.back().position.x() - robot_x;
+        float g_dz = m_path.poses.empty() ? 0.0f : m_path.poses.back().position.y() - robot_y;
+        float f_x = m_transformedPath.poses.empty() ? 0.0f : m_transformedPath.poses.front().position.x();
+
+        std::cout << "[RPP_AUDIT] " << (x_vel_sign  < 0 ? "REV" : "FWD")
+              << " | R_W:" << robot_x << "," << robot_y << "," << robot_yaw * 57.3f
+              << " | G_T:" << g_dx << "," << g_dz
+              << " | L_P:" << lookahead_x << "," << lookahead_y << "," << lookahead_dist
+              << " | FRST_X:" << f_x
+              // Значения W и ST в дебаге теперь всегда будут отображать реальные, зажатые лимиты
+              << " | SGN:" << x_vel_sign << " W:" << output.angular_vel << " ST:" << output.steering_angle * 57.3f
+              << std::endl;
+    }
+    // ========================================================================
+
 
     m_lastLinearVel = linear_vel;
     m_lastAngularVel = angular_vel;

@@ -33,18 +33,18 @@ struct VPCParams
     float approach_velocity_scaling_dist = 15.0f;
 
     // Lookahead
-    float lookahead_dist = 10.0f;
-    float min_lookahead_dist = 5.0f;
-    float max_lookahead_dist = 25.0f;
+    float lookahead_dist = 3.5f;
+    float min_lookahead_dist = 2.2f;
+    float max_lookahead_dist = 10.0f;
     float lookahead_time = 3.5f;
     bool use_velocity_scaled_lookahead_dist = true;
     bool use_interpolation = true;
     bool use_heading_from_path = true;
 
     // Ограничения
-    float min_turning_radius = 16.0f;
-    float max_lateral_accel = 6.0f;
-    float max_linear_accel = 9.0f;
+    float min_turning_radius = 14.5f;
+    float max_lateral_accel = 8.0f;
+    float max_linear_accel = 25.0f;
     float max_angular_accel = 1.3f;
 
     // Поворот к курсу
@@ -69,7 +69,7 @@ struct VPCParams
     float wheelbase = 7.107f;
 
     // Goal tolerance
-    float goal_dist_tol = 0.15f;
+    float goal_dist_tol = 0.01f;
 
     // Control duration
     float control_duration = 0.1f;

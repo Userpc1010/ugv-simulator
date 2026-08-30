@@ -26,12 +26,12 @@ StateLattice::StateLattice(QObject* parent) : QObject(parent)
     planner_params_.max_iterations = 20000000;
     planner_params_.max_on_approach_iterations = 2000;
     planner_params_.lattice_filepath = "";  // Путь к файлу решетки
-    planner_params_.reverse_penalty = 3.0f;
+    planner_params_.reverse_penalty = 0.25f;
     planner_params_.change_penalty = 0.5f;
-    planner_params_.non_straight_penalty = 1.5f;
+    planner_params_.non_straight_penalty = 1.15f;
     planner_params_.cost_penalty = 2.0f;
-    planner_params_.retrospective_penalty = 0.01f;
-    planner_params_.rotation_penalty = 3.5f;  // Специфично для lattice
+    planner_params_.retrospective_penalty = 0.1f;
+    planner_params_.rotation_penalty = 2.0f;  // Специфично для lattice
     planner_params_.analytic_expansion_ratio = 3.5f;
     planner_params_.analytic_expansion_max_cost = 200.0f;
     planner_params_.analytic_expansion_max_cost_override = false;

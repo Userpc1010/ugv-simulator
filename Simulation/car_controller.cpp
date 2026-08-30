@@ -81,14 +81,14 @@ control_vec CarController::update(const state_vec& state, float dt) {
     // ===== РУЛЕВОЕ УПРАВЛЕНИЕ ПИД-РЕГУЛЯТОР УГЛОВОЙ СКОРОСТИ С ГИБРИДНЫМ ПЕРЕХОДОМ =====
         float ff = 0.0f;
         if (std::fabs(v_fwd) > 1.0f) {
-            float v_for_kin = (v_fwd >= 0) ? v_fwd : -v_fwd;
-            ff = std::atan2(m_w_cmd * wheelbase, v_for_kin);
-            if (v_fwd < 0) ff = -ff;
+            //float v_for_kin = (v_fwd >= 0) ? v_fwd : -v_fwd;
+            ff = std::atan2(m_w_cmd * wheelbase, std::fabs(v_fwd));
+            //if (v_fwd < 0) ff = -ff;
             ff = std::clamp(ff, -safe_max_angle, safe_max_angle);
         }
 
         float err_yaw = m_w_cmd - current_yaw;
-        if (v_fwd < 0) err_yaw = -err_yaw;
+        //if (v_fwd < 0) err_yaw = -err_yaw;
 
         m_integral_yaw += err_yaw * dt;
 
@@ -112,7 +112,8 @@ control_vec CarController::update(const state_vec& state, float dt) {
         // === ГИБРИД: DirectSteering + ПИД ===
         float direct_angle = 0.0f;
         if (std::fabs(v_fwd) > 0.05f) {
-            direct_angle = std::atan2(m_w_cmd * wheelbase, v_fwd);
+            direct_angle = std::atan2(m_w_cmd * wheelbase, std::fabs(v_fwd));
+
             direct_angle = std::clamp(direct_angle, -max_steer, max_steer);
         } else {
             direct_angle = m_current_steer_angle;
