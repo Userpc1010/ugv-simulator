@@ -74,69 +74,32 @@ control_vec CarController::update(const state_vec& state, float dt) {
     Eigen::Vector3f local_vel = state.ori.conjugate() * state.vel;
     float v_fwd = local_vel.z();
 
-    // Динамический предел угла на этой скорости
+    // ===== РЕГУЛЯТОР УГЛОВОЙ СКОРОСТИ =====
+
     float safe_max = getSafeMaxSteer(v_fwd);
     float safe_max_angle = safe_max * safe_max_coff;
 
-    // ===== РУЛЕВОЕ УПРАВЛЕНИЕ ПИД-РЕГУЛЯТОР УГЛОВОЙ СКОРОСТИ С ГИБРИДНЫМ ПЕРЕХОДОМ =====
-        float ff = 0.0f;
-        if (std::fabs(v_fwd) > 1.0f) {
-            //float v_for_kin = (v_fwd >= 0) ? v_fwd : -v_fwd;
-            ff = std::atan2(m_w_cmd * wheelbase, std::fabs(v_fwd));
-            //if (v_fwd < 0) ff = -ff;
-            ff = std::clamp(ff, -safe_max_angle, safe_max_angle);
-        }
+    float abs_v = fabs(v_fwd);
 
-        float err_yaw = m_w_cmd - current_yaw;
-        //if (v_fwd < 0) err_yaw = -err_yaw;
+    float ads_s = fabs(m_w_cmd);
 
-        m_integral_yaw += err_yaw * dt;
+    if (abs_v > 0.1f) {
 
-        float yaw_abs = std::fabs(current_yaw);
-        if (yaw_abs > 1.0f) {
-            m_integral_yaw *= 0.9f;
-        }
+        float blend = ads_s / 6.5f;
 
-        if (std::fabs(m_w_cmd) < 0.001f && yaw_abs < 0.05f) {
-            m_integral_yaw = 0.0f;
-        }
+        // Взвешенный знаменатель
+        float v_denom = (1.0f - blend) * ads_s + blend * abs_v;
 
-        m_integral_yaw = std::clamp(m_integral_yaw, -YAW_INTEGRAL_LIMIT, YAW_INTEGRAL_LIMIT);
+        float steer_rad = atan2(m_w_cmd * wheelbase, v_denom);
 
-        float deriv_yaw = (err_yaw - m_prev_error_yaw) / dt;
-        m_prev_error_yaw = err_yaw;
+        steer_rad = std::clamp(steer_rad, -safe_max_angle, safe_max_angle);
 
-        float pid_steer = ff + (kp_yaw * err_yaw + ki_yaw * m_integral_yaw + kd_yaw * deriv_yaw);
-        pid_steer = std::clamp(pid_steer, -safe_max_angle, safe_max_angle);
+        if (steer_rad >  max_steer) steer_rad =  max_steer;
+        if (steer_rad < -max_steer) steer_rad = -max_steer;
 
-        // === ГИБРИД: DirectSteering + ПИД ===
-        float direct_angle = 0.0f;
-        if (std::fabs(v_fwd) > 0.05f) {
-            direct_angle = std::atan2(m_w_cmd * wheelbase, std::fabs(v_fwd));
+        m_current_steer_angle = steer_rad ;
 
-            direct_angle = std::clamp(direct_angle, -max_steer, max_steer);
-        } else {
-            direct_angle = m_current_steer_angle;
-        }
-
-        float speed_abs = std::fabs(v_fwd);
-        float blend = 0.0f;
-        if (speed_abs > m_blendStartSpeed) {
-            blend = (speed_abs - m_blendStartSpeed) / (m_blendEndSpeed - m_blendStartSpeed);
-            blend = std::clamp(blend, 0.0f, 1.0f);
-        }
-
-        float target_angle = direct_angle * (1.0f - blend) + pid_steer * blend;
-        // ================================
-
-        float steer_diff = target_angle - m_current_steer_angle;
-        float max_step = STEER_SPEED * dt;
-        if (std::fabs(steer_diff) < max_step) {
-            m_current_steer_angle = target_angle;
-        } else {
-            m_current_steer_angle += (steer_diff > 0 ? 1 : -1) * max_step;
-        }
-        m_current_steer_angle = std::clamp(m_current_steer_angle, -max_steer, max_steer);
+    }
         ctrl.steerAngle = m_current_steer_angle;
 
     // ===== ОГРАНИЧЕНИЕ СКОРОСТИ ПО КРИВИЗНЕ =====
